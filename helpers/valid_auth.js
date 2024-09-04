@@ -1,27 +1,30 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-    valid: (req, res, next) =>{
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+    valid: (req, res, next) => {
+        let bearToken = req.headers['authorization'];
 
-        if (!token) {
-            return res.status(401).json({ message: 'Token não fornecido' });
+        // Verificação se o token está presente
+        if (!bearToken) {
+            return res.status(401).json({ mensagem: "Token não fornecido" });
         }
 
-        try {
-            const decoded = jwt.verify(token, '123@!#');
-            req.user = decoded; 
-            next();
-        } catch (err) {
-            // Captura qualquer erro que ocorra durante a verificação do token
-            if (err.name === 'TokenExpiredError') {
-                return res.status(401).json({ message: 'Token expirado' }); // Erro específico para token expirado
-            } else if (err.name === 'JsonWebTokenError') {
-                return res.status(403).json({ message: 'Token inválido' }); // Erro específico para token inválido
+        let tokenParts = bearToken.split(" ");
+        
+        // Verificação do formato do token
+        if (tokenParts[0] !== 'Bearer' || !tokenParts[1]) {
+            return res.status(400).json({ mensagem: "Formato de token inválido" });
+        }
+
+        let token = tokenParts[1];
+
+        jwt.verify(token, '123@!#', (err, decoded) => {
+            if (err) {
+                res.status(403).json({ mensagem: "Token inválido" });
             } else {
-                return res.status(500).json({ message: 'Erro interno do servidor' }); // Erro genérico
+                req.email = decoded.email;  // Decodifica o e-mail do token
+                next();
             }
-        }
+        });
     }
 }
