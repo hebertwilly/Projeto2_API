@@ -13,7 +13,10 @@ const userSchema = new mongoose.Schema({
     senha: {
         type: String,
         required: true
-    }
+    },
+    curriculo: {
+        type: String,
+    },
 });
 
 // Criando o modelo a partir do schema

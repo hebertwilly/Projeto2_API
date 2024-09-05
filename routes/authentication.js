@@ -9,7 +9,6 @@ const User = require('../model/user');
 // Rota de login
 router.post("/login", (req, res) => {
     let { email, senha } = req.body;
-    
     // Exemplo de validação simples de login
     if (email === "hebertwilly@hotmail.com" && senha === "123") {
         let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
@@ -26,9 +25,10 @@ router.post("/criarConta", async (req, res) => {
 
     const newUser = await User.create(usuario);
     console.log(newUser);
-    
+
     res.json({res: "usuario criado", user: newUser});
 });
+
 
 // Rota protegida
 router.get("/", valid.auth, (req, res) => {

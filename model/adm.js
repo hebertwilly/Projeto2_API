@@ -1,11 +1,18 @@
-let admList = [];
-let id = 0;
+const mongoose = require('mongoose');
 
-module.exports = {
-   createAdm(obj){
-    admList.push(obj);
-   },
-   listAdm(){
-    return admList;
-   }
-}
+// Definindo o schema do usuário
+const admSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true
+    },
+    senha: {
+        type: String,
+        required: true
+    }
+});
+
+// Criando o modelo a partir do schema
+const Adm = mongoose.model('Adm', admSchema);
+
+module.exports = Adm;
