@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-    valid: (req, res, next) => {
+    auth: (req, res, next) => {
         let bearToken = req.headers['authorization'];
 
         // Verificação se o token está presente

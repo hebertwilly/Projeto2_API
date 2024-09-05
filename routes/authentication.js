@@ -3,7 +3,8 @@ const router = express.Router();
 
 const jwt = require('jsonwebtoken');
 const createAdm = require('../model/adm');
-const valid = require('../helpers/valid_auth');  // Supondo que o caminho correto seja este
+const valid = require('../helpers/valid_auth');
+const User = require('../model/user');
 
 // Rota de login
 router.post("/login", (req, res) => {
@@ -19,20 +20,18 @@ router.post("/login", (req, res) => {
 });
 
 // Rota de criação de conta
-router.post("/criarConta", (req, res) => {
-    let { id, email, senha } = req.body;
-    let adm = { id, email, senha };
+router.post("/criarConta", async (req, res) => {
+    let { nome, email, senha } = req.body;
+    let usuario = {nome, email, senha};
+
+    const newUser = await User.create(usuario);
+    console.log(newUser);
     
-    if (adm) {
-        createAdm.createAdm(adm);
-        res.json({ adm: adm, mensagem: "Conta criada" });
-    } else {
-        res.status(403).json({ adm: false, error: "Erro ao criar conta" });
-    }
+    res.json({res: "usuario criado", user: newUser});
 });
 
 // Rota protegida
-router.get("/", valid.valid, (req, res) => {
+router.get("/", valid.auth, (req, res) => {
     let users = createAdm.listAdm();
     res.json({ users: users });
 });
