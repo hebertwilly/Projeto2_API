@@ -2,7 +2,10 @@ const Vaga = require('../model/vaga');
 
 async function createVaga(vaga){
     try{
-        const newVaga = await Vaga.create(vaga);
+        const {idVaga, nome, empresa, descricao} = vaga;
+        const obj = {idVaga, nome, empresa, descricao};
+
+        const newVaga = await Vaga.create(obj);
         console.log(newVaga);
 
         return newVaga;

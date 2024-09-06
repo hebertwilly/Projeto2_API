@@ -22,7 +22,6 @@ const vagaSchema = new mongoose.Schema({
         idCandidato: {
           type: String,
           ref: 'User', // Refere-se ao modelo de Usuário
-          unique: true
         }
       }],
 });

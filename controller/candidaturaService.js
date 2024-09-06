@@ -65,4 +65,24 @@ async function getCandidaturaById(id) {
     }
 };
 
-module.exports = {createCandidatura, deleteCandidatura, getCandidaturaById}
+async function listCandidaturas(email) {
+    try {
+     
+      const candidaturas = await Candidatura.find({ candidato: email }).exec();
+
+      if (candidaturas.length === 0) {
+        console.log('Nenhuma candidatura encontrada para o email:', email);
+        return null
+      } else {
+        console.log('Candidaturas encontradas:', candidaturas);
+      }
+  
+      return candidaturas;
+    } catch (error) {
+      console.error('Erro ao listar candidaturas por email:', error);
+      return null
+    }
+}
+  
+
+module.exports = {createCandidatura, deleteCandidatura, getCandidaturaById, listCandidaturas}

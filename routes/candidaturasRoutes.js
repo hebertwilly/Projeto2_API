@@ -4,7 +4,7 @@ const router = express.Router();
 const valid = require('../helpers/valid_auth');
 geraId = require('../helpers/contador');
 
-const {createCandidatura, deleteCandidatura, getCandidaturaById} = require('../controller/candidaturaService');
+const {createCandidatura, deleteCandidatura, getCandidaturaById, listCandidaturas} = require('../controller/candidaturaService');
 
 router.post("/postCandidatura", async (req,res)=>{
     const {idVaga,candidato} = req.body;
@@ -50,5 +50,20 @@ router.get("/candidatura/:id", async(req, res)=>{
     }
 });
 
+router.get("/minhasCandidaturas", valid.auth, async(req, res)=>{
+    const user = req.email
+
+    try{
+        const candidaturas = await listCandidaturas(user);
+        
+        if(candidaturas !== null){
+            res.json({candidaturas: candidatura});
+        }else{
+            res.json({Error: "Erro ao listar"});
+        }
+    }catch(error){
+        res.json({error: error});
+    }
+});
 
 module.exports = router;
