@@ -3,7 +3,8 @@ const router = express.Router();
 
 const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
-const createAdm = require('../controller/admService');
+
+const {createAdm, deleteAdm, getAdmById} = require('../controller/admService');
 const {createUser, deleteConta, getUserById} = require('../controller/userService');
 
 
@@ -63,6 +64,28 @@ router.post("/criarAdm", async (req, res) =>{
         res.json({res: "Adm Criado", adm: newAdm});
     }else{
         res.status(403).json({error: "Error ao criar adm"});
+    }
+});
+
+router.delete("/deleteAdm/:email",valid.auth, async (req, res)=>{
+    const email = req.params.email;
+    
+    const result = await deleteAdm(email);
+    if(result===false){
+        res.json({vaga: id, error: "Não foi possivel remover o usuario"});
+    }else{
+        res.json({conta: email, mensagem: "conta deletada com sucesso"})
+    }
+});
+
+router.get("/adm/:email",valid.auth, async (req, res)=>{
+    const adm = req.params.email;
+
+    const administrador = await getAdmById(adm);
+    if(administrador !== null){
+        res.json({amd: administrador});
+    }else{
+        res.json({erro: "usuario não encontrado"});
     }
 });
 
