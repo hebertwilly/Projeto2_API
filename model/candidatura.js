@@ -7,12 +7,12 @@ const candidaturaSchema = new mongoose.Schema({
         required: true
     },
     idVaga: {
-        type: Schema.Types.ObjectId,
-        ref: 'Vagas', // Refere-se ao modelo de Vaga
+        type: Number,
+        ref: 'Vaga', // Refere-se ao modelo de Vaga
         required: true,
     },
-    idCandidato: {
-        type: Schema.Types.ObjectId,
+    candidato: {
+        type:  String,
         ref: 'User', // Refere-se ao modelo de Usuário
         required: true
     },

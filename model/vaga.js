@@ -20,8 +20,8 @@ const vagaSchema = new mongoose.Schema({
       },
       candidatos: [{
         idCandidato: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Usuario', // Refere-se ao modelo de Usuário
+          type: String,
+          ref: 'User', // Refere-se ao modelo de Usuário
           unique: true
         }
       }],

@@ -49,4 +49,44 @@ async function getVagaById(id){
     }
 }
 
-module.exports = {createVaga, deleteVaga, getVagaById};
+async function populateCandidatos(email, id){
+    try{
+
+        const populate = await Vaga.findOneAndUpdate(
+            {idVaga: id},
+            {$push: {candidatos: {idCandidato: email}}},
+            {new: true, runValidators: true}
+        )
+
+        if(!populate){
+            throw new Error('Vaga Não encontrada');
+        }
+
+        console.log(populate);
+        return true;
+    }catch(error){
+        console.error('Erro ao adicionar candidato:', error);
+        throw error; // Propaga o erro
+    }
+}
+
+async function deleteCandidato(email, id){
+    try{
+        const resultado = await Vaga.updateOne(
+            {idVaga: id},
+            {$pull:{candidatos:{idCandidato: email}}},
+        );
+
+        if (resultado.nModified === 0) {
+            console.log("Nenhum Candidato encontrado");
+            return false;
+        }
+
+        return true;
+    }catch (error) {
+        console.error('Erro ao remover candidato:', error);
+        throw error; // Propaga o erro
+    }
+}
+
+module.exports = {createVaga, deleteVaga, getVagaById, populateCandidatos, deleteCandidato};
