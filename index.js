@@ -7,10 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-authentication = require('./routes/authentication');
+authentication = require('./routes/authenticationRoute');
 app.use('/', authentication);
 
-vagas = require('./routes/vagas');
+vagas = require('./routes/vagasRoute');
 app.use('/', vagas);
 
 
