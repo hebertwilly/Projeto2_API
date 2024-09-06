@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
 const vagaSchema = new mongoose.Schema({
-    nome: {
+      idVaga:{
+        type: Number,
+        required: true,
+        unique: true
+      },
+      nome: {
         type: String,
         required: true
       },
@@ -15,24 +20,11 @@ const vagaSchema = new mongoose.Schema({
       },
       candidatos: [{
         idCandidato: {
-          type: Schema.Types.ObjectId,
-          ref: 'Usuario' // Refere-se ao modelo de Usuário
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Usuario', // Refere-se ao modelo de Usuário
+          unique: true
         }
       }],
-      criador: {
-        type: Schema.Types.ObjectId,
-        ref: 'Usuario', // Refere-se ao modelo de Usuário
-        required: true
-      },
-      status: {
-        type: String,
-        enum: ['aberta', 'fechada'],
-        default: 'aberta'
-      },
-      aprovado: {
-        type: Boolean,
-        default: false
-      }
 });
 
 const Vaga = mongoose.model('Vaga', vagaSchema);

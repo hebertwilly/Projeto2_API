@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended: false}));
 authentication = require('./routes/authentication');
 app.use('/', authentication);
 
-
+vagas = require('./routes/vagas');
+app.use('/', vagas);
 
 
 app.listen(3000, ()=>{

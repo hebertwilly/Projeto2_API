@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const jwt = require('jsonwebtoken');
-const createAdm = require('../model/adm');
 const valid = require('../helpers/valid_auth');
-const User = require('../model/user');
+const createAdm = require('../controller/admService');
+const createUser = require('../controller/userService');
 
-// Rota de login
+
 router.post("/login", (req, res) => {
     let { email, senha } = req.body;
     // Exemplo de validação simples de login
@@ -18,17 +18,31 @@ router.post("/login", (req, res) => {
     }
 });
 
-// Rota de criação de conta
+// Rota de criação de conta user
 router.post("/criarConta", async (req, res) => {
     let { nome, email, senha } = req.body;
     let usuario = {nome, email, senha};
 
-    const newUser = await User.create(usuario);
-    console.log(newUser);
-
-    res.json({res: "usuario criado", user: newUser});
+    const newUser = await createUser(usuario);
+    if(newUser !== null){
+        res.json({res: "usuario criado", user: newUser});
+    }else{
+        res.status(403).json({error: "Erro ao cadastrar usuario"});
+    }
 });
 
+router.post("/criarAdm", async (req, res) =>{
+    let {email, senha} = req.body;
+    let adm = {email, senha};
+
+    const newAdm = await createAdm(adm);
+
+    if(newAdm !== null){
+        res.json({res: "Adm Criado", adm: newAdm});
+    }else{
+        res.status(403).json({error: "Error ao criar adm"});
+    }
+});
 
 // Rota protegida
 router.get("/", valid.auth, (req, res) => {
