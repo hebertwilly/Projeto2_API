@@ -4,8 +4,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 
-const {createAdm, deleteAdm, getAdmById} = require('../controller/admService');
-const {createUser, deleteConta, getUserById} = require('../controller/userService');
+const {createAdm, deleteAdm, getAdmById, updateAdm} = require('../controller/admService');
+const {createUser, deleteConta, getUserById, updateUser} = require('../controller/userService');
 
 
 router.post("/login", async (req, res) => {
@@ -58,6 +58,18 @@ router.get("/usuario/:email",valid.auth, async (req, res)=>{
     }else{
         res.json({erro: "usuario não encontrado"});
     }
+});
+
+router.put("/updateUser/:email", valid.auth, async (req, res)=>{
+    const id = req.params.email;
+    const user = req.body
+
+        const update = await updateUser(id, user);
+        if(update !== null){
+            res.json({mensagem: "dados atualizados", user: update});
+        }else{
+            res.json({error: "usuario não atualizado"});
+        }
 });
 
 router.post("/admLogin", async (req, res)=>{
@@ -126,6 +138,18 @@ router.get("/adm/:email",valid.auth, async (req, res)=>{
     }else{
         res.json({mensagem: "Você precisa ter uma conta adm para achar um adm"});
     }
+});
+
+router.put("/updateAdm/:email", valid.auth, async (req, res)=>{
+    const id = req.params.email;
+    const adm = req.body
+
+        const update = await updateAdm(id, adm);
+        if(update !== null){
+            res.json({mensagem: "dados atualizados", adm: update});
+        }else{
+            res.json({error: "usuario não atualizado"});
+        }
 });
 
 module.exports = router;

@@ -51,4 +51,25 @@ async function getUserById(email){
     }
 }
 
-module.exports = {createUser, deleteConta, getUserById};
+async function updateUser(email, novosDados) {
+  try {
+    const usuarioAtualizado = await User.findOneAndUpdate(
+      { email: email }, 
+      { $set: novosDados }, 
+      { new: true, runValidators: true } 
+    );
+
+    if (!usuarioAtualizado) {
+      console.log('Usuário não encontrado.');
+      return null; 
+    }
+
+    console.log('Usuário atualizado com sucesso:', usuarioAtualizado);
+    return usuarioAtualizado; 
+  } catch (erro) {
+    console.error('Erro ao atualizar o usuário:', erro);
+    throw erro; 
+  }
+}
+
+module.exports = {createUser, deleteConta, getUserById, updateUser};

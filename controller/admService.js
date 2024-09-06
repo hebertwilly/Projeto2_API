@@ -49,6 +49,27 @@ async function getAdmById(email){
 
         return null;
     }
-}
+};
 
-module.exports = {createAdm, deleteAdm, getAdmById};
+async function updateAdm(email, novosDados) {
+    try {
+      const admAtualizado = await Adm.findOneAndUpdate(
+        { email: email }, 
+        { $set: novosDados }, 
+        { new: true, runValidators: true } 
+      );
+  
+      if (!admAtualizado) {
+        console.log('Usuário não encontrado.');
+        return null; 
+      }
+  
+      console.log('Usuário atualizado com sucesso:', admAtualizado);
+      return admAtualizado; 
+    } catch (erro) {
+      console.error('Erro ao atualizar o usuário:', erro);
+      throw erro; 
+    }
+  }
+
+module.exports = {createAdm, deleteAdm, getAdmById, updateAdm};
