@@ -4,7 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 const createAdm = require('../controller/admService');
-const createUser = require('../controller/userService');
+const {createUser, deleteConta, getUserById} = require('../controller/userService');
 
 
 router.post("/login", (req, res) => {
@@ -31,6 +31,28 @@ router.post("/criarConta", async (req, res) => {
     }
 });
 
+router.delete("/deleteConta/:email",valid.auth, async (req, res)=>{
+    const email = req.params.email;
+    
+    const result = await deleteConta(email);
+    if(result===false){
+        res.json({vaga: id, error: "Não foi possivel remover o usuario"});
+    }else{
+        res.json({conta: email, mensagem: "conta deletada com sucesso"})
+    }
+});
+
+router.get("/usuario/:email",valid.auth, async (req, res)=>{
+    const user = req.params.email;
+
+    const usuario = await getUserById(user);
+    if(usuario !== null){
+        res.json({user: usuario});
+    }else{
+        res.json({erro: "usuario não encontrado"});
+    }
+});
+
 router.post("/criarAdm", async (req, res) =>{
     let {email, senha} = req.body;
     let adm = {email, senha};
@@ -42,12 +64,6 @@ router.post("/criarAdm", async (req, res) =>{
     }else{
         res.status(403).json({error: "Error ao criar adm"});
     }
-});
-
-// Rota protegida
-router.get("/", valid.auth, (req, res) => {
-    let users = createAdm.listAdm();
-    res.json({ users: users });
 });
 
 module.exports = router;

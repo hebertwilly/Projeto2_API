@@ -14,4 +14,41 @@ async function createUser(user){
     }
 }
 
-module.exports = createUser;
+async function deleteConta(email){
+    try{
+        const resultado = await User.deleteOne({email: email});
+        if (resultado.deletedCount === 0) {
+            console.log('Nenhum usuario encontrado com esse email.');
+            
+            return false;
+        }else {
+            console.log('Usuario deletado com sucesso.');
+            
+            return true;
+        }
+    }catch(erro){
+        console.log("ERRO AO DELETAR");
+
+        return false;
+    }
+}
+
+async function getUserById(email){
+    try{
+        const user = await User.findOne({email: email});
+
+        if(user){
+            console.log("usuario encontrado");
+            return user;
+        }else{
+            console.log("Nenhum usuário encontrado com esse id");
+            return null;
+        }
+    }catch(erro){
+        console.log(erro);
+
+        return null;
+    }
+}
+
+module.exports = {createUser, deleteConta, getUserById};
