@@ -2,8 +2,8 @@ const Adm = require('../model/adm');
 
 async function createAdm(adm){
     try{
-        const {nome,email} = adm
-        const administrador = {nome, email}
+        const {email,senha} = adm
+        const administrador = {email, senha}
         
         const newAdm = await Adm.create(administrador);
         console.log(newAdm);
@@ -37,7 +37,7 @@ async function getAdmById(email){
     try{
         const adm = await Adm.findOne({email: email});
 
-        if(user){
+        if(adm){
             console.log("usuario encontrado");
             return adm;
         }else{

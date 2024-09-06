@@ -8,14 +8,20 @@ const {createAdm, deleteAdm, getAdmById} = require('../controller/admService');
 const {createUser, deleteConta, getUserById} = require('../controller/userService');
 
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     let { email, senha } = req.body;
-    // Exemplo de validação simples de login
-    if (email === "hebertwilly@hotmail.com" && senha === "123") {
-        let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
-        res.json({ logged: true, token: token, user: email });
-    } else {
-        res.status(403).json({ logged: false, error: "Usuário ou senha inválidos" });
+    
+    const user = await getUserById(email);
+
+    if (user !== null) {
+        if(user.senha === senha){
+            let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
+            res.json({ logged: true, token: token, user: user.senha });
+        }else {
+            res.status(403).json({ logged: false, error: "Senha inválidos" });
+        }
+    }else{
+        res.status(400).json({error: "usuario não encontrado"})
     }
 });
 
@@ -54,38 +60,71 @@ router.get("/usuario/:email",valid.auth, async (req, res)=>{
     }
 });
 
-router.post("/criarAdm", async (req, res) =>{
+router.post("/admLogin", async (req, res)=>{
+    let { email, senha } = req.body;
+    
+    const adm = await getAdmById(email);
+
+    if (adm !== null) {
+        if(adm.senha === senha){
+            let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
+            res.json({ logged: true, token: token, user: adm.senha });
+        }else {
+            res.status(403).json({ logged: false, error: "Senha inválidos" });
+        }
+    }else{
+        res.status(400).json({error: "usuario não encontrado"})
+    }
+})
+
+router.post("/criarAdm",valid.auth, async (req, res) =>{
     let {email, senha} = req.body;
     let adm = {email, senha};
 
-    const newAdm = await createAdm(adm);
+    const valida = await getAdmById(req.email);
+    if(valida !== null){
 
-    if(newAdm !== null){
-        res.json({res: "Adm Criado", adm: newAdm});
+        const newAdm = await createAdm(adm);
+        
+        if(newAdm !== null){
+            res.json({res: "Adm Criado", adm: newAdm});
+        }else{
+            res.status(403).json({error: "Error ao criar adm"});
+        }
     }else{
-        res.status(403).json({error: "Error ao criar adm"});
+        res.json({mensagem: "Você precisa ter uma conta adm para criar um adm"});
     }
 });
 
 router.delete("/deleteAdm/:email",valid.auth, async (req, res)=>{
     const email = req.params.email;
     
-    const result = await deleteAdm(email);
-    if(result===false){
-        res.json({vaga: id, error: "Não foi possivel remover o usuario"});
+    const valida = await getAdmById(req.email);
+    if(valida !== null){
+        const result = await deleteAdm(email);
+        if(result===false){
+            res.json({vaga: id, error: "Não foi possivel remover o usuario"});
+        }else{
+            res.json({conta: email, mensagem: "conta deletada com sucesso"})
+        }
     }else{
-        res.json({conta: email, mensagem: "conta deletada com sucesso"})
+        res.json({mensagem: "Você precisa ter uma conta adm para deletar um adm"});
     }
 });
 
 router.get("/adm/:email",valid.auth, async (req, res)=>{
     const adm = req.params.email;
 
-    const administrador = await getAdmById(adm);
-    if(administrador !== null){
-        res.json({amd: administrador});
+    const valida = await getAdmById(req.email);
+    if(valida !== null){
+        const administrador = await getAdmById(adm);
+        if(administrador !== null){
+            res.json({amd: administrador});
+        }else{
+            res.json({erro: "usuario não encontrado"});
+        }
     }else{
-        res.json({erro: "usuario não encontrado"});
+        res.json({mensagem: "Você precisa ter uma conta adm para achar um adm"});
     }
 });
 
