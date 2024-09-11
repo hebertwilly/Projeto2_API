@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 const contador = require('../helpers/contador');
 
-const {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida} = require('../controller/abastecimentoService');
+const {createAbastecimento,listAbastecidasByBico, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida} = require('../controller/abastecimentoService');
 const { getFrentistaById } = require('../controller/frentistaService');
 const {getAdmById} = require('../controller/admService');
 
@@ -54,6 +54,13 @@ router.get('/minhasAbastecidas', valid.auth, async (req, res)=>{
         res.json({abastecimentos: abastecidas});
     }
 });
+
+router.get('/abastecidasporbico/:bico', async (req, res)=>{
+    const bico = parseInt(req.params.bico);
+
+    const qtde = await listAbastecidasByBico(bico);
+    res.json({quatidade: qtde});
+})
 
 router.get('/abastecimentos', valid.auth, async(req, res)=>{
     const {page = 1} = req.query;

@@ -53,6 +53,22 @@ async function listMyAbastecidas(_id, page){
     }
 };
 
+async function listAbastecidasByBico(bico){
+
+    try{
+        const abastecimentos = await Abastecimento.find({bico: bico});
+        console.log(abastecimentos);
+        const qtde = abastecimentos.length;
+        
+        console.log(qtde);
+        return qtde;
+    }catch(error){
+        console.log("Nenhum abastecimento pra esse bico");
+
+        return false;
+    }
+}
+
 async function listAbastecidas(page){
     const limit = 5;
 
@@ -121,5 +137,5 @@ async function updateAbastecida(id, novoFrentistaId) {
     }
 }
 
-module.exports = {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida};
+module.exports = {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida, listAbastecidasByBico};
 
