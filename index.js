@@ -10,6 +10,9 @@ app.use(express.urlencoded({extended: false}));
 authentication = require('./routes/authenticationRoute');
 app.use('/', authentication);
 
+abastecimentos = require('./routes/abastecimentosRoutes');
+app.use('/', abastecimentos);
+
 app.listen(3000, ()=>{
     console.log("localhost/3000...");
 });
