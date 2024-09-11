@@ -17,7 +17,7 @@ async function createAbastecimento(abastecimento){
 
 async function deleteAbastecida(id){
     try{
-        const resultado = await Abastecida.deleteOne({idAbastecida: id});
+        const resultado = await Abastecimento.deleteOne({idAbastecida: id});
         if (resultado.deletedCount === 0) {
             console.log('Nenhuma abastecida encontrada com esse id');
             
@@ -100,5 +100,26 @@ async function getAbastecimentosForFrentista(email, page){
     }
 }
 
-module.exports = {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista};
+async function updateAbastecida(id, novoFrentistaId) {
+    try {
+        const newAbastecida = await Abastecimento.findOneAndUpdate(
+            { idAbastecida: id },
+            { $set: { idFrentista: novoFrentistaId } }, 
+            { new: true, runValidators: true }
+        );
+
+        if (!newAbastecida) {
+            console.log('Abastecida não encontrada.');
+            return false;
+        }
+
+        console.log('Abastecida atualizada com sucesso:', newAbastecida);
+        return newAbastecida;
+    } catch (error) {
+        console.error('Erro ao atualizar abastecida:', error);
+        return false;
+    }
+}
+
+module.exports = {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida};
 
