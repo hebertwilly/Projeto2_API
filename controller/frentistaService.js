@@ -72,6 +72,25 @@ async function updateFrentista(email, novosDados) {
       console.error('Erro ao atualizar o usuário:', erro);
       return false
     }
-  }
+};
 
-  module.exports = {createFrentista, deleteFrentista, getFrentistaById, updateFrentista}
+async function listFrentistas(page){
+    const limit = 5;
+
+    try{
+        const pageNumber = parseInt(page);
+        const skip = (pageNumber - 1) * limit;
+
+        const frentistas = await Frentistas.find().skip(skip).limit(limit).exec();
+        console.log(frentistas);
+        
+        return frentistas;
+
+    }catch(error){
+        console.error(error);
+
+        return false;
+    }
+};
+
+  module.exports = {createFrentista, deleteFrentista, getFrentistaById, updateFrentista, listFrentistas}

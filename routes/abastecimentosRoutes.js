@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 const contador = require('../helpers/contador');
 
-const {createAbastecimento, deleteAbastecida, listMyAbastecidas} = require('../controller/abastecimentoService');
+const {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista} = require('../controller/abastecimentoService');
 const { getFrentistaById } = require('../controller/frentistaService');
 
 router.post("/abastecida",valid.auth,  async (req, res) =>{
@@ -52,6 +52,38 @@ router.get('/minhasAbastecidas', valid.auth, async (req, res)=>{
         console.log("Abastecidas listadas com sucesso");
         res.json({abastecimentos: abastecidas});
     }
+});
+
+router.get('/abastecimentos', async(req, res)=>{
+    const {page = 1} = req.query;
+
+    const abastecidas = await listAbastecidas(page);
+
+    if(abastecidas === false){
+        console.log("Nenhum abastecimento feito");
+        res.json({mensagem: "Não foi realizado nenhum abastecimento"});
+    }else{
+        console.log("Abastecimentos encontrados:");
+        res.json({abastecimentos: abastecidas});
+    }
 })
+
+router.get('/abastecidasfor/:email', async(req, res)=>{
+    const {page = 1} = req.query;
+    const email = req.params.email
+
+    const abastecidas = await getAbastecimentosForFrentista(email, page);
+
+    if(abastecidas === false){
+        console.log("Nenhum abastecimento encontrado para esse frentista");
+        res.json({res: "Esse frentista ainda não efetuou abastecimentos"});
+    }else{
+        console.log("Abastecimentos encontrados:");
+        res.json({abastecimentos: abastecidas});
+    }
+});
+
+
+
 
 module.exports = router;
