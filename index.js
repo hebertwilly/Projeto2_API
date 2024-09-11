@@ -16,6 +16,9 @@ app.use('/', abastecimentos);
 users = require('./routes/usersRouter');
 app.use('/', users);
 
+install = require('./routes/installRoute');
+app.use('/', install);
+
 app.listen(3000, ()=>{
     console.log("localhost/3000...");
 });
