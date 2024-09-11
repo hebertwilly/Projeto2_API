@@ -4,7 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 
-const {deleteAdm, getAdmById, updateAdm} = require('../controller/admService');
+const {deleteAdm, getAdmById, updateAdm, listAdms} = require('../controller/admService');
 const {deleteFrentista, getFrentistaById, updateFrentista, listFrentistas} = require('../controller/frentistaService');
 
 router.delete("/deleteFrentista/:email", valid.auth, async (req, res)=>{
@@ -114,5 +114,24 @@ router.put("/updateAdm/:email", valid.auth, async (req, res)=>{
         }
     }
 });
+
+router.get("/administradores", valid.auth, async (req, res)=>{
+    const {page = 1} = req.query;
+
+    const valid = getAdmById(req.email);
+
+    if(valid === false){
+        res.json({mensagem: "Você precisa ter uma conta adm para listar os adm"});
+    }else{
+        const adms = await listAdms(page);
+        if(adms === false){
+            console.log(adms);
+            res.json({error: "Erro ao listar adms"});
+        }else{
+            console.log("Administradores listados", adms);
+            res.json({administradores: adms, message: "adms listados com sucesso"});
+        }
+    }
+})
 
 module.exports = router;

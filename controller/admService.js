@@ -70,6 +70,31 @@ async function updateAdm(email, novosDados) {
       console.error('Erro ao atualizar o usuário:', erro);
       return false;
     }
-  }
+};
 
-module.exports = {createAdm, deleteAdm, getAdmById, updateAdm};
+async function listAdms(page){
+    const limit = 5;
+
+    try{
+        const pageNumber = parseInt(page);
+        const skip = (pageNumber - 1) * limit;
+
+        const adm = await Adm.find().skip(skip).limit(limit).exec();
+        console.log(adm);
+        
+        if(adm){
+            return adm;
+        }else{
+            console.log("Não possui administradores");
+            return false;
+        }
+
+    }catch(error){
+        console.error(error);
+
+        return false;
+    }
+};
+
+
+module.exports = {createAdm, deleteAdm, getAdmById, updateAdm, listAdms};
