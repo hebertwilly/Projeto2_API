@@ -7,6 +7,7 @@ const contador = require('../helpers/contador');
 
 const {createAbastecimento, deleteAbastecida, listMyAbastecidas, listAbastecidas, getAbastecimentosForFrentista, updateAbastecida} = require('../controller/abastecimentoService');
 const { getFrentistaById } = require('../controller/frentistaService');
+const {getAdmById} = require('../controller/admService');
 
 router.post("/abastecida",valid.auth,  async (req, res) =>{
     let {bico, combustivel, ppl, litros} = req.body;
@@ -54,7 +55,7 @@ router.get('/minhasAbastecidas', valid.auth, async (req, res)=>{
     }
 });
 
-router.get('/abastecimentos', async(req, res)=>{
+router.get('/abastecimentos', valid.auth, async(req, res)=>{
     const {page = 1} = req.query;
 
     const abastecidas = await listAbastecidas(page);
@@ -68,7 +69,7 @@ router.get('/abastecimentos', async(req, res)=>{
     }
 })
 
-router.get('/abastecidasfor/:email', async(req, res)=>{
+router.get('/abastecidasfor/:email', valid.auth, async(req, res)=>{
     const {page = 1} = req.query;
     const email = req.params.email
 
@@ -83,44 +84,60 @@ router.get('/abastecidasfor/:email', async(req, res)=>{
     }
 });
 
-router.delete('/removeAbastecida/:id', async (req, res)=>{
+router.delete('/removeAbastecida/:id', valid.auth, async (req, res)=>{
     const id = parseInt(req.params.id, 10);
-    
+    const email = req.email
+
     if (isNaN(id)) {
         return res.status(400).json({ message: 'ID com formato inválido.' });
     }
 
-    const result = await deleteAbastecida(id);
+    const valid = await getAdmById(email);
 
-    if(result === false){
-        console.log("Abastecida não encontrada");
-        res.json({err: "Não foi encontrado nenhuma abastecida com esse id"});
+    if(valid === false){
+        console.log("Usuario não é um adm");
+        res.json({mensagem: "Apenas administradores podem remover abastecidas"});
     }else{
-        console.log("Abastecida removida");
-        res.json({mensagem:"Abastecida estornada com sucesso"});
+        const result = await deleteAbastecida(id);
+
+        if(result === false){
+            console.log("Abastecida não encontrada");
+            res.json({err: "Não foi encontrado nenhuma abastecida com esse id"});
+        }else{
+            console.log("Abastecida removida");
+            res.json({mensagem:"Abastecida estornada com sucesso"});
+        }
     }
 });
 
-router.put('/trocarFrentista/:id', async (req, res)=>{
+router.put('/trocarFrentista/:id',valid.auth, async (req, res)=>{
     const idAbastecida = parseInt(req.params.id);
+    const email = req.email
     const { novoFrentista } = req.body;
 
-    const frentista = await getFrentistaById(novoFrentista)
+    const valid = await getAdmById(email);
 
-    if(frentista === false){
-        console.log("usuario não encontrado");
-        res.json({erro: "É necessário que esse frentista tenha um login criado"});
+    if(valid===false){
+        console.log("Usuario não é um adm");
+        res.json({mensagem: "Apenas administradores podem trocar o frentista da abastecidas"});
     }else{
-        const abastecida = await updateAbastecida(idAbastecida, frentista._id);
-        console.log(frentista._id, abastecida);
+        const frentista = await getFrentistaById(novoFrentista)
 
-        if(abastecida === false){
-            console.log("Nenhuma abastecida existe com esse id");
-            res.json({error: "essa abastecida não existe"});
+        if(frentista === false){
+            console.log("usuario não encontrado");
+            res.json({erro: "É necessário que esse frentista tenha um login criado"});
         }else{
-            res.json({mensagem: "Frentista da Abastecida trocado com sucesso", abastecida: abastecida});
+            const abastecida = await updateAbastecida(idAbastecida, frentista._id);
+            console.log(frentista._id, abastecida);
+
+            if(abastecida === false){
+                console.log("Nenhuma abastecida existe com esse id");
+                res.json({error: "essa abastecida não existe"});
+            }else{
+                res.json({mensagem: "Frentista da Abastecida trocado com sucesso", abastecida: abastecida});
+            }
+        
         }
-       
     }
 });
 

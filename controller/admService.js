@@ -42,12 +42,12 @@ async function getAdmById(email){
             return adm;
         }else{
             console.log("Nenhum usuário encontrado com esse id");
-            return null;
+            return false;
         }
     }catch(erro){
         console.log(erro);
 
-        return null;
+        return false;
     }
 };
 
@@ -61,14 +61,14 @@ async function updateAdm(email, novosDados) {
   
       if (!admAtualizado) {
         console.log('Usuário não encontrado.');
-        return null; 
+        return false; 
       }
   
       console.log('Usuário atualizado com sucesso:', admAtualizado);
       return admAtualizado; 
     } catch (erro) {
       console.error('Erro ao atualizar o usuário:', erro);
-      throw erro; 
+      return false;
     }
   }
 
