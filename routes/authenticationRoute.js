@@ -5,18 +5,17 @@ const jwt = require('jsonwebtoken');
 const valid = require('../helpers/valid_auth');
 
 const {createAdm, deleteAdm, getAdmById, updateAdm} = require('../controller/admService');
-const {createUser, deleteConta, getUserById, updateUser} = require('../controller/userService');
-
+const {createFrentista, deleteFrentista, getFrentistaById, updateFrentista} = require('../controller/frentistaService');
 
 router.post("/login", async (req, res) => {
     let { email, senha } = req.body;
     
-    const user = await getUserById(email);
+    const frentista = await getFrentistaById(email);
 
-    if (user !== null) {
-        if(user.senha === senha){
-            let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
-            res.json({ logged: true, token: token, user: user.senha });
+    if (frentista !== null) {
+        if(frentista.senha === senha){
+            let token = jwt.sign({ frentista: frentista.email, _id: frentista._id}, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
+            res.json({ logged: true, token: token, frentista: frentista.senha });
         }else {
             res.status(403).json({ logged: false, error: "Senha inválidos" });
         }
@@ -28,45 +27,45 @@ router.post("/login", async (req, res) => {
 // Rota de criação de conta user
 router.post("/criarConta", async (req, res) => {
     let { nome, email, senha } = req.body;
-    let usuario = {nome, email, senha};
+    let frentista = {nome, email, senha};
 
-    const newUser = await createUser(usuario);
-    if(newUser !== null){
-        res.json({res: "usuario criado", user: newUser});
+    const newFrentista = await createFrentista(frentista);
+    if(newFrentista !== null){
+        res.json({res: "usuario criado", frentista: newFrentista});
     }else{
         res.status(403).json({error: "Erro ao cadastrar usuario"});
     }
 });
 
-router.delete("/deleteConta/:email",valid.auth, async (req, res)=>{
+router.delete("/deleteFrentista/:email", async (req, res)=>{
     const email = req.params.email;
     
-    const result = await deleteConta(email);
+    const result = await deleteFrentista(email);
     if(result===false){
-        res.json({vaga: id, error: "Não foi possivel remover o usuario"});
+        res.json({error: "Não foi possivel remover o usuario"});
     }else{
-        res.json({conta: email, mensagem: "conta deletada com sucesso"})
+        res.json({Frentista: email, mensagem: "conta deletada com sucesso"})
     }
 });
 
-router.get("/usuario/:email",valid.auth, async (req, res)=>{
-    const user = req.params.email;
+router.get("/frentista/:email", async (req, res)=>{
+    const email = req.params.email;
 
-    const usuario = await getUserById(user);
-    if(usuario !== null){
-        res.json({user: usuario});
+    const frentista = await getFrentistaById(email);
+    if(frentista !== null){
+        res.json({frentista: frentista});
     }else{
         res.json({erro: "usuario não encontrado"});
     }
 });
 
-router.put("/updateUser/:email", valid.auth, async (req, res)=>{
-    const id = req.params.email;
-    const user = req.body
+router.put("/updateFrentista/:email", async (req, res)=>{
+    const email = req.params.email;
+    const newFrentista = req.body
 
-        const update = await updateUser(id, user);
+        const update = await updateFrentista(email, newFrentista);
         if(update !== null){
-            res.json({mensagem: "dados atualizados", user: update});
+            res.json({mensagem: "dados atualizados", frentista: update});
         }else{
             res.json({error: "usuario não atualizado"});
         }
