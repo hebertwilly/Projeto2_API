@@ -11,7 +11,7 @@ async function createFrentista(frentista){
         return newFrentista;
     }catch (error){
         console.error("Erro ao criar administrador:", error);
-        return null
+        return false
     }
 }
 
@@ -43,12 +43,12 @@ async function getFrentistaById(email){
             return frentista;
         }else{
             console.log("Nenhum usuário encontrado com esse id");
-            return null;
+            return false;
         }
     }catch(erro){
         console.log(erro);
 
-        return null;
+        return false;
     }
 };
 
@@ -62,14 +62,15 @@ async function updateFrentista(email, novosDados) {
   
       if (!frentistaAtualizado) {
         console.log('Usuário não encontrado.');
-        return null; 
+        return false; 
       }
   
       console.log('Usuário atualizado com sucesso:', frentistaAtualizado);
-      return frentistaAtualizado; 
+      return frentistaAtualizado;
+
     } catch (erro) {
       console.error('Erro ao atualizar o usuário:', erro);
-      throw erro; 
+      return false
     }
   }
 

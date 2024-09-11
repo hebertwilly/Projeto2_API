@@ -12,15 +12,15 @@ router.post("/login", async (req, res) => {
     
     const frentista = await getFrentistaById(email);
 
-    if (frentista !== null) {
+    if (frentista === false) {
+        res.status(400).json({error: "usuario não encontrado"})
+    }else{
         if(frentista.senha === senha){
             let token = jwt.sign({ email: frentista.email, _id: frentista._id}, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
             res.json({ logged: true, token: token, _id: frentista._id, email: frentista.email});
         }else {
             res.status(403).json({ logged: false, error: "Senha inválidos" });
         }
-    }else{
-        res.status(400).json({error: "usuario não encontrado"})
     }
 });
 
@@ -30,10 +30,10 @@ router.post("/criarConta", async (req, res) => {
     let frentista = {nome, email, senha};
 
     const newFrentista = await createFrentista(frentista);
-    if(newFrentista !== null){
-        res.json({res: "usuario criado", frentista: newFrentista});
-    }else{
+    if(newFrentista === false){
         res.status(403).json({error: "Erro ao cadastrar usuario"});
+    }else{
+        res.json({res: "usuario criado", frentista: newFrentista});
     }
 });
 
@@ -52,10 +52,10 @@ router.get("/frentista/:email", async (req, res)=>{
     const email = req.params.email;
 
     const frentista = await getFrentistaById(email);
-    if(frentista !== null){
-        res.json({frentista: frentista});
-    }else{
+    if(frentista === false){
         res.json({erro: "usuario não encontrado"});
+    }else{
+        res.json({frentista: frentista});
     }
 });
 

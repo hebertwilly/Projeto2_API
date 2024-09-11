@@ -33,7 +33,24 @@ async function deleteAbastecida(id){
     }
 }
 
+async function listMyAbastecidas(_id, page){
+    const limit = 5;
 
+    try{
+        const pageNumber = parseInt(page);
+        const skip = (pageNumber - 1) * limit;
 
-module.exports = {createAbastecimento, deleteAbastecida};
+        const abastecimentos = await Abastecimento.find({idFrentista: _id}).skip(skip).limit(limit).exec();
+        console.log(abastecimentos);
+        
+        return abastecimentos;
+
+    }catch(error){
+        console.error(error);
+
+        return false;
+    }
+};
+
+module.exports = {createAbastecimento, deleteAbastecida, listMyAbastecidas};
 
