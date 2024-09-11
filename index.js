@@ -13,6 +13,9 @@ app.use('/', authentication);
 abastecimentos = require('./routes/abastecimentosRoutes');
 app.use('/', abastecimentos);
 
+users = require('./routes/usersRouter');
+app.use('/', users);
+
 app.listen(3000, ()=>{
     console.log("localhost/3000...");
 });

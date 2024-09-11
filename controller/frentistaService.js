@@ -54,7 +54,7 @@ async function getFrentistaById(email){
 
 async function updateFrentista(email, novosDados) {
     try {
-      const frentistaAtualizado = await Adm.findOneAndUpdate(
+      const frentistaAtualizado = await Frentista.findOneAndUpdate(
         { email: email }, 
         { $set: novosDados }, 
         { new: true, runValidators: true } 
@@ -81,10 +81,15 @@ async function listFrentistas(page){
         const pageNumber = parseInt(page);
         const skip = (pageNumber - 1) * limit;
 
-        const frentistas = await Frentistas.find().skip(skip).limit(limit).exec();
+        const frentistas = await Frentista.find().skip(skip).limit(limit).exec();
         console.log(frentistas);
         
-        return frentistas;
+        if(frentistas){
+            return frentistas;
+        }else{
+            console.log("Não possui frentistas");
+            return false;
+        }
 
     }catch(error){
         console.error(error);

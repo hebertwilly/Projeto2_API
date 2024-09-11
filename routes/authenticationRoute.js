@@ -37,40 +37,6 @@ router.post("/criarConta", async (req, res) => {
     }
 });
 
-router.delete("/deleteFrentista/:email", async (req, res)=>{
-    const email = req.params.email;
-    
-    const result = await deleteFrentista(email);
-    if(result===false){
-        res.json({error: "Não foi possivel remover o usuario"});
-    }else{
-        res.json({Frentista: email, mensagem: "conta deletada com sucesso"})
-    }
-});
-
-router.get("/frentista/:email", async (req, res)=>{
-    const email = req.params.email;
-
-    const frentista = await getFrentistaById(email);
-    if(frentista === false){
-        res.json({erro: "usuario não encontrado"});
-    }else{
-        res.json({frentista: frentista});
-    }
-});
-
-router.put("/updateFrentista/:email", async (req, res)=>{
-    const email = req.params.email;
-    const newFrentista = req.body
-
-        const update = await updateFrentista(email, newFrentista);
-        if(update !== null){
-            res.json({mensagem: "dados atualizados", frentista: update});
-        }else{
-            res.json({error: "usuario não atualizado"});
-        }
-});
-
 router.post("/admLogin", async (req, res)=>{
     let { email, senha } = req.body;
     
@@ -93,8 +59,9 @@ router.post("/criarAdm",valid.auth, async (req, res) =>{
     let adm = {email, senha};
 
     const valida = await getAdmById(req.email);
-    if(valida !== null){
-
+    if(valida === false){
+        res.json({mensagem: "Você precisa ter uma conta adm para criar um adm"});
+    }else{
         const newAdm = await createAdm(adm);
         
         if(newAdm !== null){
@@ -102,53 +69,7 @@ router.post("/criarAdm",valid.auth, async (req, res) =>{
         }else{
             res.status(403).json({error: "Error ao criar adm"});
         }
-    }else{
-        res.json({mensagem: "Você precisa ter uma conta adm para criar um adm"});
     }
-});
-
-router.delete("/deleteAdm/:email",valid.auth, async (req, res)=>{
-    const email = req.params.email;
-    
-    const valida = await getAdmById(req.email);
-    if(valida !== null){
-        const result = await deleteAdm(email);
-        if(result===false){
-            res.json({vaga: id, error: "Não foi possivel remover o usuario"});
-        }else{
-            res.json({conta: email, mensagem: "conta deletada com sucesso"})
-        }
-    }else{
-        res.json({mensagem: "Você precisa ter uma conta adm para deletar um adm"});
-    }
-});
-
-router.get("/adm/:email",valid.auth, async (req, res)=>{
-    const adm = req.params.email;
-
-    const valida = await getAdmById(req.email);
-    if(valida !== null){
-        const administrador = await getAdmById(adm);
-        if(administrador !== null){
-            res.json({amd: administrador});
-        }else{
-            res.json({erro: "usuario não encontrado"});
-        }
-    }else{
-        res.json({mensagem: "Você precisa ter uma conta adm para achar um adm"});
-    }
-});
-
-router.put("/updateAdm/:email", valid.auth, async (req, res)=>{
-    const id = req.params.email;
-    const adm = req.body
-
-        const update = await updateAdm(id, adm);
-        if(update !== null){
-            res.json({mensagem: "dados atualizados", adm: update});
-        }else{
-            res.json({error: "usuario não atualizado"});
-        }
 });
 
 module.exports = router;
