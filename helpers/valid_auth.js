@@ -22,7 +22,8 @@ module.exports = {
             if (err) {
                 res.status(403).json({ mensagem: "Token inválido" });
             } else {
-                req.email = decoded.email;  // Decodifica o e-mail do token
+                req.email = decoded.email;
+                req._id = decoded._id;
                 next();
             }
         });

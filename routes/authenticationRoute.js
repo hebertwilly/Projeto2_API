@@ -14,8 +14,8 @@ router.post("/login", async (req, res) => {
 
     if (frentista !== null) {
         if(frentista.senha === senha){
-            let token = jwt.sign({ frentista: frentista.email, _id: frentista._id}, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
-            res.json({ logged: true, token: token, frentista: frentista.senha });
+            let token = jwt.sign({ email: frentista.email, _id: frentista._id}, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
+            res.json({ logged: true, token: token, _id: frentista._id, email: frentista.email});
         }else {
             res.status(403).json({ logged: false, error: "Senha inválidos" });
         }
@@ -78,15 +78,15 @@ router.post("/admLogin", async (req, res)=>{
 
     if (adm !== null) {
         if(adm.senha === senha){
-            let token = jwt.sign({ email: email }, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
-            res.json({ logged: true, token: token, user: adm.senha });
+            let token = jwt.sign({ email: adm.email, _id: adm._id}, '123@!#', { expiresIn: '10m' });  // ExpiresIn ajustado para '10m'
+            res.json({ logged: true, token: token, _id: adm._id, email: adm.email});
         }else {
             res.status(403).json({ logged: false, error: "Senha inválidos" });
         }
     }else{
         res.status(400).json({error: "usuario não encontrado"})
     }
-})
+});
 
 router.post("/criarAdm",valid.auth, async (req, res) =>{
     let {email, senha} = req.body;

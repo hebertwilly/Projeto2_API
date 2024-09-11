@@ -14,5 +14,26 @@ async function createAbastecimento(abastecimento){
     }
 };
 
-module.exports = createAbastecimento;
+async function deleteAbastecida(id){
+    try{
+        const resultado = await Abastecida.deleteOne({idAbastecida: id});
+        if (resultado.deletedCount === 0) {
+            console.log('Nenhuma abastecida encontrada com esse id');
+            
+            return false;
+        }else {
+            console.log('Abastecida deletada com sucesso');
+            
+            return true;
+        }
+    }catch(erro){
+        console.log("ERRO AO DELETAR");
+
+        return false;
+    }
+}
+
+
+
+module.exports = {createAbastecimento, deleteAbastecida};
 
